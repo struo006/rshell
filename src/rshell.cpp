@@ -30,6 +30,11 @@ using namespace boost;
 		}
 		for(int i = 0; i < str.size(); i++)
 		{
+			if(str.at(i) == ';')
+			{
+				str.insert(i, " ");
+				i++;
+			}
 			if(str.at(i) == '#')
 			{
 				str = str.substr(0,i);
