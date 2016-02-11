@@ -7,8 +7,13 @@
 #include<unistd.h>
 #include<stdlib.h>
 #include<cstring> 
+#include<boost/tokenizer.hpp>
+#include<algorithm>
+#include<iterator>
+#include<sstream>
 
 using namespace std;
+using namespace boost;
 
  int main()
 {	
@@ -17,23 +22,30 @@ using namespace std;
 	 while(1)
 	{		
 		cout << "$"; 
-		getline(cin, str); 
+		vector <string> line;
+		getline(cin,str);
 		if(str == "exit")		
 		{
 			 break;		
 		}
-		else		
+		for(int i = 0; i < str.size(); i++)
 		{
-			char* char_command = new char[str.size()];
-			char* args[2];
-			args[0] = char_command;
-			args[1] = NULL;
-			execvp(args[0], args);	
-			if(execvp(args[0], args) == -1)
+			if(str.at(i) == ';')
 			{
-				perror("failed to execute");
-			}	
-
+				str.insert(i, " ");
+				i++;
+			}
+			if(str.at(i) == '#')
+			{
+				str = str.substr(0,i);
+			}
+		}
+		istringstream iss(str);
+		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(line));
+		
+		for(int i = 0; i < line.size(); i++)
+		{
+			cout << line.at(i) << endl;
 		}
 	}
 	  return 0;
