@@ -13,7 +13,7 @@ using namespace std;
  int main()
 {	
 	string str;	
-	string arg = '';
+	string arg = "";
 	 while(1)
 	{		
 		cout << "$"; 
@@ -24,7 +24,17 @@ using namespace std;
 		}
 		else		
 		{
-			execvp(str.c_str(), arg.c_str());					}	
+			char* char_command = new char[str.size()];
+			char* args[2];
+			args[0] = char_command;
+			args[1] = NULL;
+			execvp(args[0], args);	
+			if(execvp(args[0], args) == -1)
+			{
+				perror("failed to execute");
+			}	
+
+		}
 	}
 	  return 0;
 }
