@@ -15,6 +15,7 @@
 using namespace std;
 using namespace boost;
 
+void parse_line(char c_line[], char *command_line[]);
 void run_line(char *command_line[]);
 
  int main()
@@ -22,7 +23,8 @@ void run_line(char *command_line[]);
 	string str;	
 	string arg = "";
 	 while(1)
-	{	
+	{
+		str = "";	
 		char userName[100] = "";
 		if(getlogin_r(userName, sizeof(userName)-1) != 0) //Getting username, and returns null if cant be found
 		{
@@ -36,36 +38,56 @@ void run_line(char *command_line[]);
 		}
 		cout << hostName << ']';
 		cout << "$"; 
-		vector <string> line;
 		getline(cin,str);  //Gets a command
 		if(str == "exit")  //If the command is exit the program stops		
 		{
 			 break;		
 		}
-		for(int i = 0; i < str.size(); i++)
+		if(str.size() != 0 && str.at(0) == '#')
 		{
-			if(str.at(i) == ';')  //Looks for semicolons and adds a space in order to make parsing easier
-			{
-				str.insert(i, " ");
-				i++;
-			}
-			if(str.at(i) == '#')  //Removes all part of the command after the comment
-			{
-				str = str.substr(0,i);
-			}
+			str = "";
 		}
-		istringstream iss(str);
-		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(line)); //uses a string stream to parse string elements and put them into
-												      // the vector of strings
-		char *command_line[line.size()];
-		for(int i = 0; i < line.size(); i++)
+		if(str != "")
 		{
-			command_line[i] = (char *)line.at(i).c_str();
+			for(int i = 0; i < str.size(); i++)
+			{
+				if(str.at(i) == ';')  //Looks for semicolons and adds a space in order to make parsing easier
+				{
+					str.insert(i, " ");
+					i++;
+				}
+				if(str.at(i) == '#')  //Removes all part of the command after the comment
+				{
+					str = str.substr(0,i);
+				}
+			}
+			char c_line[str.size() + 1];
+			char *command_line[64];
+			strcpy(c_line,str.c_str());
+			c_line[str.size()] = '\0';
+			parse_line(c_line, command_line);
+			run_line(command_line);
 		}
-		run_line(command_line);
 
 	}
 	  return 0;
+}
+
+void parse_line(char c_line[], char *command_line[])
+{
+	while(*c_line != '\0')
+	{
+		while(*c_line == ' ' || *c_line == '\n')
+		{
+			*c_line++ = '\0';
+		}
+		*command_line++ = c_line;
+		while(*c_line != '\0' && *c_line != ' ')
+		{
+			c_line++;
+		}
+		*command_line = '\0';
+	}
 }
 
 void run_line(char *command_line[])
@@ -81,6 +103,7 @@ void run_line(char *command_line[])
 		if(execvp(*command_line,command_line) < 0)
 		{
 			perror("execvp failed");
+			exit(1);
 		}
 	}
 	else
