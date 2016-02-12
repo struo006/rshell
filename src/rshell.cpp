@@ -15,6 +15,8 @@
 using namespace std;
 using namespace boost;
 
+void run_line(char *command_line[]);
+
  int main()
 {	
 	string str;	
@@ -26,13 +28,13 @@ using namespace boost;
 		{
 			perror("Error getting username");
 		}
-		cout << userName << '@';
+		cout << '['  << userName << '@';
 		char hostName[100] = "";
 		if(gethostname(hostName, sizeof(hostName)-1) != 0) // Getting host name, returns numm if it cannot be found
 		{
 			perror("Error getting hostname");
 		}
-		cout << hostName;
+		cout << hostName << ']';
 		cout << "$"; 
 		vector <string> line;
 		getline(cin,str);  //Gets a command
@@ -53,13 +55,38 @@ using namespace boost;
 			}
 		}
 		istringstream iss(str);
-		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(line)); //uses a string stream to parse string elements and put them into the vector of strings
-		
+		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(line)); //uses a string stream to parse string elements and put them into
+												      // the vector of strings
+		char *command_line[line.size()];
 		for(int i = 0; i < line.size(); i++)
 		{
-			cout << line.at(i) << endl;
+			command_line[i] = (char *)line.at(i).c_str();
 		}
+		run_line(command_line);
 
 	}
 	  return 0;
+}
+
+void run_line(char *command_line[])
+{
+	pid_t pid;
+	int status;
+	if((pid = fork()) < 0)
+	{
+		perror("forking failed");
+	}
+	else if(pid == 0)
+	{
+		if(execvp(*command_line,command_line) < 0)
+		{
+			perror("execvp failed");
+		}
+	}
+	else
+	{
+		while(wait(&status) != pid)
+		;
+	}
+	return;
 }
