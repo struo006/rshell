@@ -8,13 +8,11 @@
 #include<unistd.h>
 #include<stdlib.h>
 #include<cstring> 
-#include<boost/tokenizer.hpp>
 #include<algorithm>
 #include<iterator>
 #include<sstream>
 
 using namespace std;
-using namespace boost;
 
 void parse_line(char c_line[], char *command_line[]);
 void run_line(char *command_line[]);
