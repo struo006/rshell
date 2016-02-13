@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string.h>
+#include<string>
 #include<vector>
 #include<sys/types.h>
 #include<sys/wait.h>
@@ -61,6 +62,14 @@ void run_line(char *command_line[]);
 					str = str.substr(0,i);
 				}
 			}
+			while(str.find("  ") != string::npos)
+			{
+				str.erase(str.find(" "));
+			}
+			if(str.at(str.size() - 1 ) == ' ')
+			{
+				str = str.substr(0,str.size()-1);
+			}
 			char c_line[str.size() + 1];
 			char *command_line[64];
 			strcpy(c_line,str.c_str());
@@ -77,17 +86,18 @@ void parse_line(char c_line[], char *command_line[])
 {
 	while(*c_line != '\0')
 	{
-		while(*c_line == ' ' || *c_line == '\n')
+		while(*c_line == ' ' || *c_line == '\n' || *c_line == '\t')
 		{
 			*c_line++ = '\0';
 		}
 		*command_line++ = c_line;
-		while(*c_line != '\0' && *c_line != ' ')
+		while(*c_line != '\0' && *c_line != ' ' && *c_line != '\n' && *c_line != '\t')
 		{
 			c_line++;
 		}
 		*command_line = '\0';
 	}
+	return;
 }
 
 void run_line(char *command_line[])
