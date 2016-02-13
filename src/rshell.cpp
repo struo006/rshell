@@ -104,7 +104,7 @@ void parse_line(char c_line[], char *command_line[])
 		{
 			c_line++;
 		}
-		*command_line = '\0';
+		*command_line = NULL;
 	}
 	return;
 }
