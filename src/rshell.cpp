@@ -74,6 +74,7 @@ void run_line(char *command_line[]);
 			char *command_line[64];
 			strcpy(c_line,str.c_str());
 			c_line[str.size()] = '\0';
+			
 			parse_line(c_line, command_line);
 			run_line(command_line);
 		}
@@ -89,6 +90,21 @@ void parse_line(char c_line[], char *command_line[])
 		while(*c_line == ' ' || *c_line == '\n' || *c_line == '\t')
 		{
 			*c_line++ = '\0';
+		}
+		if(*c_line == ';')
+		{
+			run_line(command_line);
+			for(int i = 0; i < 64; i++)
+			{
+				command_line[i] = new char[16];
+			}
+			command_line = new char*[64];
+			for(int i = 0; i < 64; i++)
+			{
+				delete [] command_line[i];
+			}
+			delete [] command_line;
+			c_line++;
 		}
 		*command_line++ = c_line;
 		while(*c_line != '\0' && *c_line != ' ' && *c_line != '\n' && *c_line != '\t')
