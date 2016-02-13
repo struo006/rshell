@@ -70,7 +70,7 @@ void run_line(char *command_line[]);
 			{
 				str = str.substr(0,str.size()-1);
 			}
-			char c_line[64];
+			char c_line[str.size() + 1] = "";
 			char *command_line[64];
 			strcpy(c_line,str.c_str());
 			c_line[str.size()] = '\0';
