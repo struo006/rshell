@@ -64,7 +64,7 @@ void run_line(char *command_line[]);
 			}
 			while(str.find("  ") != string::npos)
 			{
-				str.erase(str.find(" "));
+				str.erase(str.find("  ") + 1);
 			}
 			if(str.at(str.size() - 1 ) == ' ')
 			{
@@ -74,7 +74,6 @@ void run_line(char *command_line[]);
 			char *command_line[64];
 			strcpy(c_line,str.c_str());
 			c_line[str.size()] = '\0';
-			
 			parse_line(c_line, command_line);
 			run_line(command_line);
 		}
@@ -83,7 +82,6 @@ void run_line(char *command_line[]);
 	  return 0;
 }
 
-int k = 0;
 
 void parse_line(char c_line[], char *command_line[])
 {
@@ -93,9 +91,9 @@ void parse_line(char c_line[], char *command_line[])
 		{
 			*c_line++ = '\0';
 		}
-		if(*c_line == ';')
-		{
-			run_line(command_line);
+		//if(*c_line == ';')
+		//{
+			//run_line(command_line);
 			//for(int i = 0; i < 64; i++)
 			//{
 			//	command_line[i] = new char[16];
@@ -106,8 +104,8 @@ void parse_line(char c_line[], char *command_line[])
 			//	delete [] command_line[i];
 			//}
 			//delete [] command_line;
-			c_line++;
-		}
+			//c_line++;
+		//}
 		*command_line++ = c_line;
 		while(*c_line != '\0' && *c_line != ' ' && *c_line != '\n' && *c_line != '\t')
 		{
