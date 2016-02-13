@@ -52,23 +52,18 @@ void run_line(char *command_line[]);
 		{
 			for(unsigned i = 0; i < str.size(); i++)
 			{
-				if(str.at(i) == ';')  //Looks for semicolons and adds a space in order to make parsing easier
-				{
-					str.insert(i, " ");
-					i++;
-				}
 				if(str.at(i) == '#')  //Removes all part of the command after the comment
 				{
 					str = str.substr(0,i);
 				}
 			}
-			while(str.find(' ') != string::npos)
+			while(str.at(0) == ' ')
 			{
-				str.erase(str.find("  ") + 1);
+				str = str.substr(1,str.size()-1);
 			}
 			if(str.at(str.size() - 1 ) == ' ')
 			{
-				str = str.substr(0,str.size()-1);
+				str = str.substr(0,str.size()-2);
 			}
 			char c_line[100];
 			char *command_line[64];
