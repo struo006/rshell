@@ -77,18 +77,18 @@ void run_line(char *command_line[]);
 			c_line[str.size()] = '\0';
 			testBool_brac = test_check_brackets(c_line, extra_brac);
 			
-			if(testBool_brac && extra_brac)
+			if(testBool_brac && extra_brac) // This is to check if there were brackets and it passed with both
 			{
 				run_test(c_line);
 			}
-			else if(!testBool_brac && !extra_brac)
+			else if(!testBool_brac && !extra_brac) // If there werent brackets then it checks for test
 			{
 				testBool = test_word(c_line);
 				if(testBool)
 				{
 					run_word_test(c_line);
 				}
-				else
+				else // if there were neither test or brackets then it runs the command by execvp
 				{
 					parse_line(c_line, command_line);
 					run_line(command_line);
@@ -173,7 +173,7 @@ bool run_word_test(char command[])
 
 	if(command[i] != '\0')
 	{
-		int j = 0;
+		int j = 0; // This transfers the argument to a new c_str
 		for(; command[i] != '\0' && command[i] != ' '; ++i)
 		{
 			fix_command[j] = command[i];
@@ -181,7 +181,7 @@ bool run_word_test(char command[])
 		}
 		fix_command[j] = '\0';
 	}
-	if(exist)
+	if(exist) // This works on each different flag, and returns True or False depending on the flag
 	{
 		struct stat exist;
 		if(stat(fix_command, &exist) == 0)
@@ -243,7 +243,7 @@ bool test_check_brackets(const char command[], bool &brackets)
 			{
 				if(command[i] == ']')
 				{
-					endBracket = false;
+					endBracket = false; // this bool is to remind that the first bracket was found and end
 					if(command[i - 1] == ' ')
 					{
 						brackets = true;
@@ -258,7 +258,7 @@ bool test_check_brackets(const char command[], bool &brackets)
 				}
 			}
 			if(endBracket)
-			{
+			{ // Since open bracket was found, but not the end one. It is an error
 				cout << "Missing ]\n";
 				brackets = true;
 				return false;
@@ -318,7 +318,7 @@ bool run_test(char command[])
 	for(; command[i] == ' '; i++){} // to skip all the spaces between the flag and the argument
 	if(command[i] != '\0')
 	{
-		int j = 0;
+		int j = 0; // Transfers the argument to new c_str
 		for(; command[i] != '\0' && command[i] != ' '; i++)
 		{
 			fix_command[j] = command[i];
@@ -382,21 +382,21 @@ void run_line(char *command_line[])
 {
 	pid_t pid;
 	int status;
-	if((pid = fork()) < 0)
+	if((pid = fork()) < 0) //forks process
 	{
-		perror("forking failed");
+		perror("forking failed"); //error if forking failed
 	}
 	else if(pid == 0)
 	{
-		if(execvp(*command_line,command_line) < 0)
+		if(execvp(*command_line,command_line) < 0)  //executes command
 		{
-			perror("execvp failed");
+			perror("execvp failed"); //error if execution failes
 			exit(1);
 		}
 	}
 	else
 	{
-		while(wait(&status) != pid)
+		while(wait(&status) != pid) //waits to return to parent process
 		;
 	}
 	return;
