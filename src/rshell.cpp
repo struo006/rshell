@@ -253,6 +253,7 @@ bool test_check_brackets(const char command[])
 bool run_test(char command[])
 {
 
+}
 void run_line(char *command_line[])
 {
 	pid_t pid;
