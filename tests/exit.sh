@@ -1,21 +1,19 @@
-Script started on Fri 12 Feb 2016 08:46:10 PM PST
-]0;struo006@hammer:~/CS100/rshell[?1034h[struo006@hammer rshell]$ make
+Script started on Sun 06 Mar 2016 10:23:23 PM PST
+]0;struo006@hammer:~/CS100_new/rshell[?1034h[struo006@hammer rshell]$ ls
+LICENSE  makefile  README.md  [0m[38;5;27msrc[0m  [38;5;27mtests[0m
+[m]0;struo006@hammer:~/CS100_new/rshell[struo006@hammer rshell]$ make
 rm -rf bin
 mkdir bin
 g++ -ansi -pedantic -Wall -Werror src/rshell.cpp -o bin/rshell
-]0;struo006@hammer:~/CS100/rshell[struo006@hammer rshell]$ bin/rshell
-[struo006@hammer.cs.ucr.edu]$cat README.md
-# rshell
-rshell project
-This is the rshell project.
-[struo006@hammer.cs.ucr.edu]$cat README.md exit
-# rshell
-rshell project
-
-This is the rshell project.
-cat: exit: No such file or directory
+]0;struo006@hammer:~/CS100_new/rshell[struo006@hammer rshell]$ bin/rshell
+[struo006@hammer.cs.ucr.edu]$tests -e a.out
+Error missing Flag
+[struo006@hammer.cs.ucr.edu]$test -e a.out exit
+(False)
+[struo006@hammer.cs.ucr.edu]$test -e a.out
+(False)
 [struo006@hammer.cs.ucr.edu]$exit
-]0;struo006@hammer:~/CS100/rshell[struo006@hammer rshell]$ exit
+]0;struo006@hammer:~/CS100_new/rshell[struo006@hammer rshell]$ exit
 exit
 
-Script done on Fri 12 Feb 2016 08:46:49 PM PST
+Script done on Sun 06 Mar 2016 10:23:58 PM PST
