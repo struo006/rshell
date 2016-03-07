@@ -18,7 +18,7 @@ using namespace std;
 bool run_test(char command[]);
 bool run_word_test(char command[]);
 bool test_word(const char command[]);
-bool test_check_brackets(const char command[]);
+bool test_check_brackets(const char command[], bool &brackets);
 void parse_line(char c_line[], char *command_line[]);
 void run_line(char *command_line[]);
 
@@ -66,27 +66,26 @@ void run_line(char *command_line[]);
 			}
 			if(str.at(str.size() - 1 ) == ' ')
 			{
-				str = str.substr(0,str.size()-2);
+				str = str.substr(0,str.size()- 1);
 			}
+			bool extra_brac = false;
 			bool testBool_brac = false;
 			bool testBool = false;
 			char c_line[100];
 			char *command_line[64];
 			strcpy(c_line,str.c_str());
 			c_line[str.size()] = '\0';
-			testBool_brac = test_check_brackets(c_line);
+			testBool_brac = test_check_brackets(c_line, extra_brac);
 			
-			if(testBool_brac)
+			if(testBool_brac && extra_brac)
 			{
 				run_test(c_line);
 			}
-			else if(!testBool_brac)
+			else if(!testBool_brac && !extra_brac)
 			{
-				cout << "Checking test\n";
 				testBool = test_word(c_line);
 				if(testBool)
 				{
-					cout << "Running test\n";
 					run_word_test(c_line);
 				}
 				else
@@ -154,11 +153,21 @@ bool run_word_test(char command[])
 		i++;
 		i++;
 	}
-	else if(command[i] == '-')
+	else if(command[i] == '-' && (command[i + 1] != 'e' && command[i + 1] != ' '))
+	{
+		cout << "Invalid Flag\n";
+		return false;
+	}
+	else if(command[i] == '-' && (command[i + 1] == 'e' || command[i + 1] == ' '))
 	{
 		exist = true;
 		i++;
 		i++;
+	}
+	else
+	{
+		cout << "Error missing Flag\n";
+		return false;
 	}
 	for(; command[i] == ' '; ++i){} // skip all spaces between flag and argument
 
@@ -177,12 +186,12 @@ bool run_word_test(char command[])
 		struct stat exist;
 		if(stat(fix_command, &exist) == 0)
 		{
-			cout << "(TRUE)\n";
+			cout << "(True)\n";
 			return true;
 		}
 		else
 		{
-			cout << "(FALSE)\n";
+			cout << "(False)\n";
 			return false;
 		}
 	}
@@ -192,12 +201,12 @@ bool run_word_test(char command[])
 		stat(fix_command, &file);
 		if(S_ISREG(file.st_mode) != 0)
 		{
-			cout << "(TRUE)\n";
+			cout << "(True)\n";
 			return true;
 		}
 		else
 		{
-			cout << "(FALSE)\n";
+			cout << "(False)\n";
 			return false;
 		}
 	}
@@ -207,12 +216,13 @@ bool run_word_test(char command[])
 		stat(fix_command, &dir);
 		if(S_ISDIR(dir.st_mode) != 0)
 		{
-			cout << "(TRUE)\n";
+			cout << "(True)\n";
 			return true;
 		}
 		else
 		{
-			cout << "(FALSE)\n";
+			cout << "(False)\n";
+			return false;
 		}
 	}
 	return false;
@@ -220,10 +230,10 @@ bool run_word_test(char command[])
 
 
 
-bool test_check_brackets(const char command[])
+bool test_check_brackets(const char command[], bool &brackets)
 {
-	cout << "Checking brackets\n";
-	unsigned i = 0;
+	bool endBracket = true;
+	int i = 0;
 	if(command[i] == '[')
 	{
 		i++;
@@ -233,18 +243,33 @@ bool test_check_brackets(const char command[])
 			{
 				if(command[i] == ']')
 				{
+					endBracket = false;
 					if(command[i - 1] == ' ')
 					{
-					return true;
+						brackets = true;
+						return true;
 					}
 					else
 					{
+						brackets = true;
 						cout << "Need a space before ]\n";
 						return false;
 					}
 				}
-				++i;
 			}
+			if(endBracket)
+			{
+				cout << "Missing ]\n";
+				brackets = true;
+				return false;
+			}
+
+		}
+		else
+		{
+			brackets = true;
+			cout << "Need a space after [\n";
+			return false;
 		}
 	}
 	return false;
@@ -252,7 +277,106 @@ bool test_check_brackets(const char command[])
 
 bool run_test(char command[])
 {
+	bool file = false;
+	bool dir = false;
+	bool exist = false;
 
+	int i = 1;
+	for(; command[i] == ' '; i++){} // gets rid of spaces between [ and flag
+
+	if(command[i] == '-')
+	{
+		i++;
+		if(command[i] == 'f')
+		{
+			file = true;
+			i++;
+		}
+		else if(command[i] == 'd')
+		{
+			dir = true;
+			i++;
+		}
+		else if(command[i] == 'e' || command[i] == ' ')
+		{
+			exist = true;
+			i++;
+		}
+		else
+		{
+			cout << "Error, invalid flag\n";
+			return false;
+		}
+	}
+	else if(command[i] != '-')
+	{
+		cout << "Error, missing flag\n";
+		return false;
+	}
+
+	char fix_command[100];
+	for(; command[i] == ' '; i++){} // to skip all the spaces between the flag and the argument
+	if(command[i] != '\0')
+	{
+		int j = 0;
+		for(; command[i] != '\0' && command[i] != ' '; i++)
+		{
+			fix_command[j] = command[i];
+			j++;
+		}
+		fix_command[j] = '\0';
+
+	}
+	else
+	{
+		cout << "Invalid argument with flag\n";
+		return false;
+	}
+	if(exist)
+	{
+		struct stat exist;
+		if(stat(fix_command, &exist) == 0)
+		{
+			cout << "(True)\n";
+			return true;
+		}
+		else
+		{
+			cout << "(False)\n";
+			return false;
+		}
+	}
+	else if(file)
+	{
+		struct stat file;
+		stat(fix_command, &file);
+		if(S_ISREG(file.st_mode) != 0)
+		{
+			cout << "(True)\n";
+			return true;
+		}
+		else
+		{
+			cout << "(False)\n";
+			return false;
+		}
+	}
+	else if(dir)
+	{
+		struct stat dir;
+		stat(fix_command, &dir);
+		if(S_ISDIR(dir.st_mode) != 0)
+		{
+			cout << "(True)\n";
+			return true;
+		}
+		else
+		{
+			cout << "(False)\n";
+			return false;
+		}
+	}
+	return false;
 }
 void run_line(char *command_line[])
 {
